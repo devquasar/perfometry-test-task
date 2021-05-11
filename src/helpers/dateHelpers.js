@@ -4,14 +4,14 @@ import {
   format,
   subSeconds,
   subMinutes,
-  subHours,
   subMonths,
   subYears,
-  startOfToday
+  startOfToday,
+  isYesterday
 } from 'date-fns'
 
 const MINUTES_IN_HOUR = 60
-const MINUTES_IN_DAY = 1440
+// const MINUTES_IN_DAY = 1440
 const MS_IN_SEC = 1000 * 60
 
 export function countDown(countDownDate, cb) {
@@ -38,13 +38,15 @@ export function countDown(countDownDate, cb) {
 export function formatDistanceToNow(date) {
   const seconds = differenceInSeconds(new Date(), date)
   const minutes = Math.round(seconds / 60)
-  const minutesToday = differenceInMinutes(startOfToday, date)
+  const minutesToday = Math.abs(differenceInMinutes(startOfToday(), date))
   const currentYear = new Date().getFullYear()
+
+  console.log(minutes);
 
   if (seconds < 60) return 'just now'
   else if (minutes < MINUTES_IN_HOUR) return `${minutes}m ago`
   else if (minutes < minutesToday) return `${Math.floor(minutes / MINUTES_IN_HOUR)}h ago`
-  else if (minutes < (MINUTES_IN_DAY * 2)) return 'yesterday'
+  else if (isYesterday(date)) return 'yesterday'
   else if (date.getFullYear() == currentYear) return format(date, 'd MMM')
   else if (date.getFullYear() < currentYear) return format(date, 'd MMM yyyy')
 
@@ -57,9 +59,18 @@ const times = function (n, iterator) {
 };
 
 const dateArr = [
-  ...times(4, () => subSeconds(new Date(), getRandomCeil(1, 60))),
-  ...times(13, () => subMinutes(new Date(), getRandomCeil(1, 60))),
-  ...times(13, () => subHours(new Date(), getRandomCeil(20, 50))),
+  ...times(10, () => subSeconds(new Date(), getRandomCeil(1, 60))),
+  ...times(10, () => subMinutes(new Date(), getRandomCeil(1, 60))),
+  new Date('2021-05-10T09:01:01'),
+  new Date('2021-05-10T11:01:01'),
+  new Date('2021-05-10T12:01:01'),
+  new Date('2021-05-10T13:01:01'),
+  new Date('2021-05-10T14:01:01'),
+  new Date('2021-05-10T15:01:01'),
+  new Date('2021-05-10T16:01:01'),
+  new Date('2021-05-10T17:01:01'),
+  new Date('2021-05-10T18:01:01'),
+  new Date('2021-05-10T20:01:01'),
   ...times(10, () => subMonths(new Date(), getRandomCeil(1, 4))),
   ...times(10, () => subYears(new Date(), getRandomCeil(1, 4)))
 ]
