@@ -13,7 +13,7 @@
       </thead>
       <tbody>
         <ListItem
-          v-for="(user, idx) in sortedUsers"
+          v-for="(user, idx) in items"
           :key="idx"
           :user="user"
         />
@@ -42,17 +42,11 @@ export default {
   },
   data() {
     return {
-      page: 1,
+      page: 0,
       items: [],
     };
   },
   computed: {
-    sortedUsers() {
-      const usersClone = this.items.slice();
-      return usersClone.sort((a, b) => {
-        return new Date(b.dateAdded) - new Date(a.dateAdded);
-      })
-    },
     allItemsLoaded() {
       return this.items.length >= 50;
     },
@@ -60,7 +54,7 @@ export default {
   methods: {
     async getUsers() {
       if (this.allItemsLoaded) return;
-      const users = await getUsers(this.page);
+      const users = await getUsers(this.page + 1);
       this.page++;
       this.items = [...this.items, ...users];
     },
@@ -82,7 +76,7 @@ body {
 }
 .content {
   margin-top: 49px;
-  padding: 0px 35px 0px 35px;
+  padding: 0px 30px 0px 30px;
   font-size: 20px;
   min-width: 100%;
 }

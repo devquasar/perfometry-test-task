@@ -1,7 +1,18 @@
-import { differenceInSeconds, format, subSeconds, subMinutes, subHours, subMonths, subYears } from 'date-fns'
+import {
+  differenceInSeconds,
+  differenceInMinutes,
+  format,
+  subSeconds,
+  subMinutes,
+  subHours,
+  subMonths,
+  subYears,
+  startOfToday
+} from 'date-fns'
 
-const MINUTES_IN_HOUR = 1440
+const MINUTES_IN_HOUR = 60
 const MINUTES_IN_DAY = 1440
+const MS_IN_SEC = 1000 * 60
 
 export function countDown(countDownDate, cb) {
   const countDownTime = countDownDate.getTime();
@@ -9,9 +20,9 @@ export function countDown(countDownDate, cb) {
     const now = new Date().getTime();
     const distance = countDownTime - now;
 
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    const hours = Math.floor((distance % (MS_IN_SEC * 60 * 24)) / (MS_IN_SEC * 60));
+    const minutes = Math.floor((distance % (MS_IN_SEC * 60)) / (MS_IN_SEC));
+    const seconds = Math.floor((distance % MS_IN_SEC) / 1000);
 
 
     if (distance <= 1) {
@@ -27,46 +38,42 @@ export function countDown(countDownDate, cb) {
 export function formatDistanceToNow(date) {
   const seconds = differenceInSeconds(new Date(), date)
   const minutes = Math.round(seconds / 60)
+  const minutesToday = differenceInMinutes(startOfToday, date)
   const currentYear = new Date().getFullYear()
 
   if (seconds < 60) return 'just now'
   else if (minutes < MINUTES_IN_HOUR) return `${minutes}m ago`
-  else if (minutes < MINUTES_IN_DAY) return `${Math.floor(minutes / MINUTES_IN_HOUR)}h ago`
+  else if (minutes < minutesToday) return `${Math.floor(minutes / MINUTES_IN_HOUR)}h ago`
   else if (minutes < (MINUTES_IN_DAY * 2)) return 'yesterday'
   else if (date.getFullYear() == currentYear) return format(date, 'd MMM')
   else if (date.getFullYear() < currentYear) return format(date, 'd MMM yyyy')
 
 }
 
-const dateArr = []
+const times = function (n, iterator) {
+  var accum = Array(Math.max(0, n));
+  for (var i = 0; i < n; i++) accum[i] = iterator.call();
+  return accum;
+};
 
-function getRandomArbitrary(min, max) {
+const dateArr = [
+  ...times(4, () => subSeconds(new Date(), getRandomCeil(1, 60))),
+  ...times(13, () => subMinutes(new Date(), getRandomCeil(1, 60))),
+  ...times(13, () => subHours(new Date(), getRandomCeil(20, 50))),
+  ...times(10, () => subMonths(new Date(), getRandomCeil(1, 4))),
+  ...times(10, () => subYears(new Date(), getRandomCeil(1, 4)))
+]
+
+function getRandomCeil(min, max) {
   return Math.ceil(Math.random() * (max - min) + min);
 }
 
-function fillDates() {
-  for (let i = 1; i < 10; i++) {
-    dateArr.push(subSeconds(new Date(), getRandomArbitrary(1, 60)))
-    dateArr.push(subMinutes(new Date(), getRandomArbitrary(1, 60)))
-    dateArr.push(subHours(new Date(), getRandomArbitrary(20, 50)))
-    dateArr.push(subMonths(new Date(), getRandomArbitrary(1, 4)))
-    dateArr.push(subYears(new Date(), getRandomArbitrary(1, 4)))
-  }
-}
-
-fillDates()
-
-function shuffleDate(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-export function userMapFn(user) {
-  shuffleDate(dateArr)
-  return {
-    ...user,
-    dateAdded: dateArr[0]
+export function usersMapWithPage(page) {
+  return function (user, index) {
+    const dateIndex = page === 1 ? index : page === 2 ? (page * 20) - (20 - index) : (page - 1) * 20 + index
+    return {
+      ...user,
+      dateAdded: dateArr[dateIndex]
+    }
   }
 }
