@@ -41,8 +41,6 @@ export function formatDistanceToNow(date) {
   const minutesToday = Math.abs(differenceInMinutes(startOfToday(), date))
   const currentYear = new Date().getFullYear()
 
-  console.log(minutes);
-
   if (seconds < 60) return 'just now'
   else if (minutes < MINUTES_IN_HOUR) return `${minutes}m ago`
   else if (minutes < minutesToday) return `${Math.floor(minutes / MINUTES_IN_HOUR)}h ago`

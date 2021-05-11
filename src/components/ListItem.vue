@@ -5,7 +5,7 @@
     </td>
     <td>{{ user.name.first + " " + user.name.last }}</td>
     <td>{{ user.email }}</td>
-    <td>{{ formattedDistance() }}</td>
+    <td>{{ distance }}</td>
   </tr>
 </template>
 
@@ -25,17 +25,19 @@ export default {
   data() {
     return {
       interval: null,
+      distance: ""
     };
   },
   created() {
-    this.interval = setInterval(this.formattedDistance, MS_IN_MINUTE);
+    this.setDistance();
+    this.interval = setInterval(this.setDistance, MS_IN_MINUTE);
   },
   beforeDestroy() {
     clearInterval(this.interval);
   },
   methods: {
-    formattedDistance() {
-      return formatDistanceToNow(this.user.dateAdded);
+    setDistance() {
+      this.distance = formatDistanceToNow(this.user.dateAdded);
     },
   },
 };
