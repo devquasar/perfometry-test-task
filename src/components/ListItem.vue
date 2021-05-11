@@ -3,7 +3,7 @@
     <td>
       <img :src="user.picture.medium" class="avatar" alt="avatar" />
     </td>
-    <td>{{ user.name.first + " " + user.name.last }}</td>
+    <td>{{ fullName }}</td>
     <td>{{ user.email }}</td>
     <td>{{ distance }}</td>
   </tr>
@@ -27,6 +27,11 @@ export default {
       interval: null,
       distance: ""
     };
+  },
+  computed: {
+    fullName() {
+      return `${this.user.name.first} ${this.user.name.last}`
+    }
   },
   created() {
     this.setDistance();
