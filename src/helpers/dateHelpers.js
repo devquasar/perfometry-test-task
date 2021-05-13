@@ -11,8 +11,9 @@ import {
 } from 'date-fns'
 
 const MINUTES_IN_HOUR = 60
-// const MINUTES_IN_DAY = 1440
 const MS_IN_SEC = 1000 * 60
+
+const BATCH_SIZE = 20
 
 export function countDown(countDownDate, cb) {
   const countDownTime = countDownDate.getTime();
@@ -60,17 +61,17 @@ const dateArr = [
   ...times(10, () => subSeconds(new Date(), getRandomCeil(1, 60))),
   ...times(10, () => subMinutes(new Date(), getRandomCeil(1, 60))),
   new Date('2021-05-01T09:01:01'),
-  new Date('2021-05-04T11:01:01'),
-  new Date('2021-05-07T12:01:01'),
-  new Date('2021-05-10T13:01:01'),
-  new Date('2021-05-13T14:01:01'),
-  new Date('2021-05-14T15:01:01'),
-  new Date('2021-05-17T16:01:01'),
-  new Date('2021-05-22T17:01:01'),
-  new Date('2021-05-25T18:01:01'),
-  new Date('2021-05-29T20:01:01'),
-  ...times(10, () => subMonths(new Date(), getRandomCeil(1, 4))),
-  ...times(10, () => subYears(new Date(), getRandomCeil(1, 4)))
+  new Date('2021-05-02T11:01:01'),
+  new Date('2021-05-04T12:01:01'),
+  new Date('2021-05-05T13:01:01'),
+  new Date('2021-05-07T14:01:01'),
+  new Date('2021-05-08T15:01:01'),
+  new Date('2021-05-09T16:01:01'),
+  new Date('2021-05-10T17:01:01'),
+  new Date('2021-05-11T18:01:01'),
+  new Date('2021-05-12T20:01:01'),
+  ...times(10, () => subMonths(new Date(), getRandomCeil(2, 5))),
+  ...times(10, () => subYears(new Date(), getRandomCeil(2, 5)))
 ]
 
 function getRandomCeil(min, max) {
@@ -79,7 +80,8 @@ function getRandomCeil(min, max) {
 
 export function usersMapWithPage(page) {
   return function (user, index) {
-    const dateIndex = page === 1 ? index : page === 2 ? (page * 20) - (20 - index) : (page - 1) * 20 + index
+    let decrementedPage = --page
+    const dateIndex = (decrementedPage * BATCH_SIZE) + index
     return {
       ...user,
       dateAdded: dateArr[dateIndex]
