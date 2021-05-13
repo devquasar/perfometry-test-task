@@ -80,7 +80,7 @@ function getRandomCeil(min, max) {
 
 export function usersMapWithPage(page) {
   return function (user, index) {
-    let decrementedPage = --page
+    let decrementedPage = page - 1
     const dateIndex = (decrementedPage * BATCH_SIZE) + index
     return {
       ...user,
