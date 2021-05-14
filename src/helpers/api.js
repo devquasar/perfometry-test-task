@@ -1,9 +1,7 @@
 import { usersMapWithPage } from './dateHelpers'
 
 const BATCH_SIZE = 20;
-
 const USERS_LIMIT = 50;
-
 const MAX_PAGE = Math.ceil(USERS_LIMIT / BATCH_SIZE)
 
 export async function getUsers(page) {

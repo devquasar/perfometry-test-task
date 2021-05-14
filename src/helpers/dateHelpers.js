@@ -53,7 +53,7 @@ export function formatDistanceToNow(date) {
 
 const times = function (n, iterator) {
   var accum = Array(Math.max(0, n));
-  for (var i = 0; i < n; i++) accum[i] = iterator.call();
+  for (let i = 0; i < n; i++) accum[i] = iterator.call();
   return accum;
 };
 
@@ -80,7 +80,7 @@ function getRandomCeil(min, max) {
 
 export function usersMapWithPage(page) {
   return function (user, index) {
-    let decrementedPage = page - 1
+    const decrementedPage = page - 1
     const dateIndex = (decrementedPage * BATCH_SIZE) + index
     return {
       ...user,
