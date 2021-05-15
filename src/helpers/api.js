@@ -15,7 +15,7 @@ export async function getUsers(page) {
   );
   const parsed = await res.json();
   const mapped = parsed.results.map(userMapFn).sort((a, b) => {
-    return new Date(b.dateAdded) - new Date(a.dateAdded);
+    return b.dateAdded - a.dateAdded;
   })
   return mapped
 }
